@@ -1,0 +1,22 @@
+{
+  "name": "travel-planner-app-back-end",
+  "version": "1.0.0",
+  "description": "Travel Planner application, back-end environment as part of the assignment for the DWD of CoderAcademy, cohort oct2024.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hernan-vela/travel-planner-app-back-end.git"
+  },
+  "author": "Hernan Velasquez, Tsai-Chi Yang, Jessica Amy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hernan-vela/travel-planner-app-back-end/issues"
+  },
+  "homepage": "https://github.com/hernan-vela/travel-planner-app-back-end#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
