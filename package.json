@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Travel Planner application, back-end environment as part of the assignment for the DWD of CoderAcademy, cohort oct2024.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch src/index.js"
