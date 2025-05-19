@@ -19,6 +19,3 @@ app.listen(port, () => {
   mongoose.connect('mongodb://127.0.0.1:27017/latte_dB')
   console.log(mongoose.connection)
 })
-
-
-app.use(trip_routes)
