@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 // Connect to MongoDB
 export async function connect() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/nameOfDataBase')// HERE INTRODUCE THE NAME OF THE DATABASE CREATED IN MONGODB
+    await mongoose.connect('mongodb://127.0.0.1:27017/latte_dB')// HERE INTRODUCE THE NAME OF THE DATABASE CREATED IN MONGODB
     console.log(mongoose.connection.readyState == 1 ? 'Mongoose connected' : 'Mongoose failed to connect!')
 }
 
