@@ -1,9 +1,9 @@
 /* Creates a user model for the database with the following fields:
 email, password, accountType */
 
-import { model } from 'mongoose'
+import { model, Schema } from 'mongoose'
 
-const User = model('User', {
+const userSchema = new Schema({
   email: {
     type: String,
     required: true,
