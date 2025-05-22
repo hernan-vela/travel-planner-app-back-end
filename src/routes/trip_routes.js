@@ -14,19 +14,6 @@ router.get('/trips', async (req, res) => {
   res.send(await Trip.find());
 })
 
-// // Get one trip
-// router.get('/trips/:id', async (req, res) => {
-//   const tripId = req.params.id
-//   const trip = await trips.find(p => p.id == tripId)
-//   if (trip) {
-//     res.send(trip)
-//     // return an meaningful message to the client in case of error
-//   } else {
-//     res.status(404).send({ error: `Trip with id ${tripId} not found`})
-//   }
-// })
-
-
 // Get one trip
 // relative HTTP route to retrieve the trip
 router.get('/trips/:id', async (req, res) => {
@@ -42,7 +29,6 @@ router.get('/trips/:id', async (req, res) => {
     res.status(404).send({ error: `Trip with id ${tripId} not found`})
   }
 })
-
 
 // Create a new trip
 router.post('/trips', (req, res) => {
@@ -62,11 +48,6 @@ router.post('/trips', (req, res) => {
 //     res.status(400).send({ error: err.message })
 //   }
 })
-
-
-
-
-
 
 
 // // Update a trip
