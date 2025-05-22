@@ -1,8 +1,11 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import trip_routes from './routes/trip_routes.js'
+import { connect } from './db.js'
+// import { connect } from 'mongoose';
+// import mongoose from 'mongoose';
 // import expense_routes from './routes/expense_routes.js';
 // import category_routes from './routes/category_routes.js';
-import trip_routes from './routes/trip_routes.js'
+
 
 const app = express ()
 const port = 3000
@@ -23,9 +26,6 @@ app.use(trip_routes)
 
 app.listen(port, async () => {
   console.log(`Example app listening on port ${port}`);
-  // Connect to MongoDB
-  await mongoose.connect('mongodb://127.0.0.1:27017/travelp');
-  console.log(mongoose.connection.readyState ==1 ? 'Mongoose connected' : 'Mongoose failed');
-
+  connect()
 });
 

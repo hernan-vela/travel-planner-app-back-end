@@ -4,30 +4,6 @@ import Trip from '../models/trip.js'
 // import Category from '../models/category.js'
 // // import { auth, adminOnly } from '../auth.js'
 
-const trips = [
-  {
-    id: 1,
-    location: 'New Caledonia',
-    arrivalDate: '01/04/2025',
-    departureDate: '07/04/2025',
-    totalExpense: 2000
-  },
-  {
-    id: 2,
-    location: 'Fiji',
-    arrivalDate: '08/04/2025',
-    departureDate: '15/04/2025',
-    totalExpense: 1000
-  },
-  {
-    id: 3,
-    location: 'Bali, Indonesia',
-    arrivalDate: '16/06/2025',
-    departureDate: '20/06/2025',
-    totalExpense: 1500
-  }
-]
-
 const router = Router()
 
 
@@ -38,10 +14,27 @@ router.get('/trips', async (req, res) => {
   res.send(await Trip.find());
 })
 
+// // Get one trip
+// router.get('/trips/:id', async (req, res) => {
+//   const tripId = req.params.id
+//   const trip = await trips.find(p => p.id == tripId)
+//   if (trip) {
+//     res.send(trip)
+//     // return an meaningful message to the client in case of error
+//   } else {
+//     res.status(404).send({ error: `Trip with id ${tripId} not found`})
+//   }
+// })
+
+
 // Get one trip
-router.get('/trips/:id', (req, res) => {
-  const tripId = req.params.id
-  const trip = trips.find(p => p.id == tripId)
+// relative HTTP route to retrieve the trip
+router.get('/trips/:id', async (req, res) => {
+  // get the ID from the trip
+  const tripId = req.params.id;
+  // get the trip with the given ID
+  const trip = await Trip.findOne({ _id: tripId }); // HERE THIS PART WAS COMPLEMENTED BY .populate('category') FOR THE nodeintro example.
+  // send the trip back to the client
   if (trip) {
     res.send(trip)
     // return an meaningful message to the client in case of error
@@ -70,26 +63,8 @@ router.post('/trips', (req, res) => {
 //   }
 })
 
-// // Get all trips
-// router.get('/trips', async (req, res) => {
-//   res.send(await Trip.find());
-// })
 
-// // Get one trip
-// // relative HTTP route to retrieve the trip
-// router.get('trips/:id', async (req, res) => {
-//   // get the ID from the trip
-//   const tripId = req.params.id;
-//   // get the trip with the given ID
-//   const trip = await Trip.findOne({ _id: tripId }); // HERE THIS PART WAS COMPLEMENTED BY .populate('category') FOR THE nodeintro example.
-//   // send the trip back to the client
-//   if (trip) {
-//     res.send(trip)
-//     // return an meaningful message to the client in case of error
-//   } else {
-//     res.status(404).send({ error: `Trip with id ${tripId} not found`})
-//   }
-// })
+
 
 
 
