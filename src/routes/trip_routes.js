@@ -31,57 +31,54 @@ router.get('/trips/:id', async (req, res) => {
 })
 
 // Create a new trip
-router.post('/trips', (req, res) => {
-//   try {
-//     // get trip data from the request body
-     const bodyData = req.body
-     console.log(bodyData)
-
-     res.send('poasdfasd')
-//     // create and save the new Trip instance
-//     const trip = await Trip.create(bodyData)
-//     // send trip to the client with 201 status
-//     res.status(201).send(trip)
-//   }
-//   catch (err) {
-//     // TODO: log to error file
-//     res.status(400).send({ error: err.message })
-//   }
+router.post('/trips', async (req, res) => {
+  try {
+    // get trip data from the request body
+    const bodyData = req.body
+    // create and save the new Trip instance
+    const trip = await Trip.create(bodyData)
+    // send trip to the client with 201 status
+    res.status(201).send(trip)
+  }
+  catch (err) {
+    // TODO: log to error file
+    res.status(400).send({ error: err.message })
+  }
 })
 
 
-// // Update a trip
-// async function update(req, res) {
-//   // retrieve the trip from the database
-//   const trip = await Trip.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
-//   if (trip) {
-//     // send the trip the client
-//     res.send(trip)
-//     // return an meaningful message to the client in case of error
-//   } else {
-//     res.status(404).send({ error: `Trip with id = '${req.params.id}' not found` })
-//   }
-// }
+// Update a trip
+async function update(req, res) {
+  // retrieve the trip from the database
+  const trip = await Trip.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
+  if (trip) {
+    // send the trip the client
+    res.send(trip)
+    // return an meaningful message to the client in case of error
+  } else {
+    res.status(404).send({ error: `Trip with id = '${req.params.id}' not found` })
+  }
+}
 
-// router.put('/trips/:id', update)
-// router.patch('/trips/:id', update)
+router.put('/trips/:id', update)
+router.patch('/trips/:id', update)
 
-// // Delete a trip
-// router.delete('/trips/:id', async (req, res) => {
-//   const trip = await Trip.findByIdAndDelete(req.params.id)
-//   if (trip) {
-//     // sent the trip to the client
-//     res.send(trip)
-//     // return an meaningful message to the client in case of error
-//   } else {
-//     res.status(404).send({ error: `Trip with id = '${req.params.id}' not found` })
-//   }
-// })
+// Delete a trip
+router.delete('/trips/:id', async (req, res) => {
+  const trip = await Trip.findByIdAndDelete(req.params.id)
+  if (trip) {
+    // sent the trip to the client
+    res.send(trip)
+    // return an meaningful message to the client in case of error
+  } else {
+    res.status(404).send({ error: `Trip with id = '${req.params.id}' not found` })
+  }
+})
 
-// export const total updateTripTotalExpense = async (tripId) => {
-//   const total = await Expense.getTotalForTrip(tripId);
-//   await Trip.findByIdAndUpdate(tripId, { totalExpense: total });
-// }
+export const updateTripTotalExpense = async (tripId) => {
+  const total = await Expense.getTotalForTrip(tripId);
+  await Trip.findByIdAndUpdate(tripId, { totalExpense: total });
+}
 
 // // module.exports = { router }
 export default router
