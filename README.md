@@ -28,6 +28,26 @@ Node.js package that enables the management of environment variables by loading 
 Testing framework developed by Facebook, which is mainly used for testing React applications, but it is robust enough to be used with any JavaScript project. It is quite comprehensive while allows testing solutions with minimal setup, mocking functions and modules and code coverage reporting (jestjs, 2025)[^7].
 
 
+### Minimal hardware required
+
+According to the dependencies and packages used in this application, the minimal requirements are:
+- CPU: with Dual-core processor (e.g., Intel i3 or equivalent ARM)
+- RAM: 4 GB
+- Storage: 10 GB available
+- OS: Windows 10+, macOS, or Linux
+### Sources
+
+1. **Node.js System Requirements**:  
+    https://nodejs.org/en/download
+    
+2. **MongoDB System Requirements (Mongoose uses MongoDB)**:  
+    [https://www.mongodb.com/docs/manual/administration/production-notes/](https://www.mongodb.com/docs/manual/administration/production-notes/)
+    
+3. **DigitalOcean & Heroku minimum specs** for small apps:  
+    https://www.digitalocean.com/products/droplets  
+    https://devcenter.heroku.com/articles/nodejs-support
+
+
 ### References
 
 [^1]: Airbnb, JavaScript 2025, *Airbnb JavaScript Style Guide*, accessed on 10 May 2025, https://github.com/airbnb/javascript
