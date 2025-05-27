@@ -27,25 +27,42 @@ Node.js package that enables the management of environment variables by loading 
 #### Jest
 Testing framework developed by Facebook, which is mainly used for testing React applications, but it is robust enough to be used with any JavaScript project. It is quite comprehensive while allows testing solutions with minimal setup, mocking functions and modules and code coverage reporting (jestjs, 2025)[^7].
 
-
 ### Minimal hardware required
 
-According to the dependencies and packages used in this application, the minimal requirements are:
-- CPU: with Dual-core processor (e.g., Intel i3 or equivalent ARM)
-- RAM: 4 GB
-- Storage: 10 GB available
-- OS: Windows 10+, macOS, or Linux
-### Sources
+According to the dependencies and packages used in this application, the minimal requirements for local development and lightweight testing are:
 
-1. **Node.js System Requirements**:  
-    https://nodejs.org/en/download
-    
-2. **MongoDB System Requirements (Mongoose uses MongoDB)**:  
-    [https://www.mongodb.com/docs/manual/administration/production-notes/](https://www.mongodb.com/docs/manual/administration/production-notes/)
-    
-3. **DigitalOcean & Heroku minimum specs** for small apps:  
-    https://www.digitalocean.com/products/droplets  
-    https://devcenter.heroku.com/articles/nodejs-support
+- CPU: with Dual-core processor (e.g., Intel i3 or equivalent ARM) (Node.js, 2025)[^8].
+- RAM: 4 GB would be needed if MongoDB is local. Otherwise, 2GB of RAM will satisfy the requirements (MongoDB, 2025)[^9].
+- Storage: 10 GB will comfortably handle MongoDB, logs and static files (MongooDB, 2025)[^9].
+- OS: Windows 10+, macOS, or Linux
+
+### Comparisons to alternative technologies
+
+Other technologies which would also make this application possible are compared in the table below:
+
+| **Stack**              | **Frontend**        | **Backend**       | **Database** | **Pros**                                                                             | **Cons**                                                  | **For you if...**                                       |
+| ---------------------- | ------------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------- | ------------------------------------------------------- |
+| **MEVN**               | Vue.js              | Express.js + node | MongoDB      | Files size is small, uses HTML tags to build, and it is reactive                      | It gets less support from the React community             | JS is desired with less complexity                      |
+| **Django + React**     | React               | Django (Python)   | PostgreSQL   | Built- in admin, auth, forms                                                         | Required knowledge of Python and JS                       | Robust backend is preferred                             |
+| **Next.js + Prisma**   | Next.js (React SSR) | Node.js           | PostgreSQL   | Easily read by search engines and friendly DB interaction                            | It might be heavy for small apps                          | Full-stack with server-side rendering                   |
+| **Flutter + Firebase** | Flutter (Dart)      | Firebase (BaaS)   | Firestore    | Cross-platform, real-time sync, no backend setup                                     | Subscription based, limited with complex DB relationships | Mobile support                                          |
+| **Ruby on Rails**      | ERB/Hotwire         | Rails             | PostgreSQL   | Easy scaffolding, code generators, and pre-formed architecture to boost productivity | Less JS focus, older ecosystem                            | You want Minimum Viable Product fast with minimal setup |
+
+Source for **MEVN** (State of JS, 2023)[^10]
+Source for **Next.js + Prisma** (Prisma, 2025)[^11], (Heavy AI, 2024)[^12], (Cloudfare, 2025)
+Source for **Flutter + Firebase** (FreeCodeCamp, 2020)[^13]
+Source for **Django + React** (Geeks for Geeks, 2025)[^14]
+Source for **Ruby on Rails** (Hotwire.dev, 2025)[^15]
+
+### Licenses of chosen technologies
+
+- MongoDB, Inc.'s *Server Side Public License* (MongoDB, 2025)[^16]
+- Express.js is licensed under *MIT License* (Expressjs, 2015)[^17]
+- Node.js *MIT License* (Nodejs, 2022)[^18]
+- JSON Web Token is *MIT License* (node-jsonwebtoken, 2014)[^19]
+- Bcrypt is *MIT License* (node.bcrypt.js, 2021)[^20]
+- Dotenv is *MIT License* (dotenv, 2015)[^21]
+- Jest is *MIT License* (jest, 2024)[^22]
 
 
 ### References
@@ -63,3 +80,34 @@ According to the dependencies and packages used in this application, the minimal
 [^6]: TeachmeJs, 2025, *Understanding dotenv: A Guide to Managing Environment Variables in Node.js*, accessed on 15 May 2025, https://teachmejs.com/understanding-dotenv-a-guide-to-managing-environment-variables-in-node-js/
 
 [^7]: Jest on Github, 2025, *Delightful JavaScript Testing*, accessed on 5 May 2025, https://github.com/jestjs/jest
+
+[^8]: Node.js, 2025 _Download Node.js®_, accessed on 27 May 2025, https://nodejs.org/en
+
+[^9]: MongoDB, 2025, _Production Notes for Self-Managed Deployments_, accessed on 05 May 2025,
+https://www.mongodb.com/docs/manual/administration/production-notes/
+
+[^10]: State of JS, 2023, *Front-End Frameworks*, accessed on 05 May 2025, https://2023.stateofjs.com/en-US/libraries/front-end-frameworks/
+
+[^11]: Prisma, 2025, *Prisma Documentation*, accessed on 15 May 2025, https://www.prisma.io/docs
+
+[^12]: Heavy.AI, 2024, *Server-Side Rendering*, accessed on 15 May 2025, https://www.heavy.ai/technical-glossary/server-side-rendering#:~:text=Server%2Dside%20rendering%20(SSR),HTML%20page%20for%20the%20client
+
+[^13]: Free Code Camp, 2020, *Flutter Course - Full Tutorial for Beginners (Build iOS and Android Apps)*, accessed on 16 May 2025 from Youtube, https://www.youtube.com/watch?v=pTJJsmejUOQ 
+
+[^14]: Geeks for Geeks, 2025, *How to Connect Django with Reactjs ?*, accessed on 16 May 2025, https://www.geeksforgeeks.org/how-to-connect-django-with-reactjs/
+
+[^15]: Hotwire.dev, 2025, *Hotwire, HTML over the wire*, accessed on 16 May 2025, https://hotwired.dev/
+
+[^16]: MongoDB, 2025, *MongoDB Licensing*, accessed on 27 May 2025, https://www.mongodb.com/legal/licensing/community-edition
+
+[^17]: Expressjs on GitHub, 2015, *MIT License, express / LICENSE*, accessed on 27 May 2025, https://github.com/expressjs/express/blob/master/LICENSE
+
+[^18]: Nodejs on GitHub, 2022, *node / LICENSE*, accessed on 27 May 2025, https://github.com/nodejs/node/blob/main/LICENSE
+
+[^19]: node-jsonwebtoken on GitHub, 2014, *node-jsonwebtoken / LICENSE*, accessed on 27 May 2025, https://github.com/auth0/node-jsonwebtoken/blob/master/LICENSE
+
+[^20]: node.bcrypt.js on GitHub, 2021, *node.bcyrpt.js*, accessed on 27 May 2025, https://github.com/kelektiv/node.bcrypt.js?tab=readme-ov-file
+
+[^21]: dotenv on GitHub, 2015, *BSD 2-Clause "Simplified" License*, accessed on 27 May 2025, https://github.com/motdotla/dotenv/blob/master/LICENSE
+
+[^22]: jest on Github, 2024, *MIT License, jest / LICENSE*, accessed ib 27 May 2025, https://github.com/jestjs/jest/blob/main/LICENSE
