@@ -1,9 +1,10 @@
-/* Creates a user model for the database with the following fields:
-email, password, accountType */
-
+/**Creates a user model for the database with the following fields:
+email, password, accountType
 import { model } from 'mongoose'
+*/
+const mongoose = require('mongoose');
 
-const User = model('User', {
+const User = mongoose.model('User', {
   email: {
     type: String,
     required: true,
@@ -18,6 +19,6 @@ const User = model('User', {
     enum: ['admin', 'user'],
     default: 'user',
   }
-})
+});
 
-module.exports = { User }
+module.exports = User;

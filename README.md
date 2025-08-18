@@ -6,6 +6,94 @@
 ### 15524 - Hernan Velasquez
 ### 16011 - Jessica Amy
 
+# 🌍 Travel Planner API
+
+This is the backend server for the **Travel Planner App**, a full-stack MERN application that helps users manage their trips and travel expenses. The API allows users to securely create, update, and delete trips and related expenses, supporting features such as categories and expense totals.
+
+---
+
+## Features
+
+-  **Authentication** with JWT
+-  **Trip management** (create, update, delete, view)
+-  **Expense tracking** per trip, including total calculations
+-  **Categories** for organizing expenses
+-  Clean, formatted date display with `moment.js`
+-  Protected routes and error handling
+-  Validation for inputs and graceful error feedback
+
+## Getting Started
+
+Follow these steps to get the backend server up and running locally:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Angie-newbie/TravelPlanner_App_Backend.git
+cd TravelPlanner_App_Backend
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Create a .env File
+In the root of the project, create a file named .env and add the following:
+```bash
+JWT_SECRET=felicisontheloose
+```
+
+### 4. Start MongoDB (if not already running)
+If you're using a local MongoDB server, start it with:
+```bash
+mongod
+```
+
+### 5. Start the Server (Development Mode)
+```bash
+npm run dev
+```
+You should see output confirming the server and database connection:
+```bash
+Server running on http://localhost:3000
+Connected to MongoDB
+```
+
+### API Endpoints
+---
+#### Users | | Register, login and auth
+
+- ```POST /register``` ---> Register a new user
+- ```POST /login``` ---> Login of registered user
+
+Once the user is authenticated with the correct user-password pair, the user can perform:
+
+#### Trips | | CRUD operations
+
+- ```POST /trips``` ---> Create a new trip 
+- ```GET /trips``` ---> Get all trips 
+- ```GET /trips/:id``` ---> Get one specific trip 
+- ```PATCH /trips/:id``` ---> Modify values of one specific trip 
+- ```DELETE /trips/:id``` ---> Delete one specific trip
+
+#### Categories | | CRUD operations
+
+- ```POST /categories``` ---> Create a new category 
+- ```GET /categories``` ---> Get all categories 
+- ```GET /categories/:id``` ---> Get one specific category 
+- ```PATCH /categories/:id``` ---> Modify one category
+- ```DELETE /categories/:id``` ---> Delete one category
+
+#### Expenses | | CRUD operations
+
+- ```POST /expenses``` ---> Create a new expense 
+- ```GET /expenses``` ---> Get all expenses 
+- ```GET /expenses/:id``` ---> Get one specific expense 
+- ```PATCH /expenses/:id``` ---> Modify values of one specific expense 
+- ```DELETE /expenses/:id``` ---> Delete one specific expense
+
 ### Style Guide for the code
 
 The code of the Travel Planner Web Application is written following the **Airbnb JavaScript Style Guide**(Airbnb, 2025)[^1], to facilitate readability, safe JavaScript practices, and seamless interaction among coders that might want to inspect this source in the future.
@@ -22,6 +110,8 @@ A backend framework that facilitates routing using HTTP requests and provides mi
 This is a Node.js library that uses the JSON Web Token (JWT), a method to create, verify and decode information shared between two parties. It allows for a secure route, avoiding unwanted entities from accessing the user's information (Geeks for Geeks, 2025)[^4].
 #### Bcrypt
 Package with a password-hashing function that masks a user's password in a random sequence of letters and numbers. This is a one-way hashing function, which means it is computationally infeasible to reverse the hash back to the original password (Auth0, 2021)[^5].
+#### Cors
+According to MDN Web Docs (2025)[^CORS], ```cors``` package in Node.js + Express.js helps configure and respond with the adequate CORS headers in HTTP responses. These headers would pass the message to the web browser to allow web pages from other origins to access resources from the server.
 #### Dotenv
 Node.js package that enables the management of environment variables by loading them from a ```.env``` file. This practice avoids coders storing sensitive data in the codebase. This package allows different configurations for development, testing, and production environments (TeachmeJS, 2025)[^6].
 #### Jest
@@ -63,8 +153,9 @@ Source for **Ruby on Rails** (Hotwire.dev, 2025)[^15]
 - Bcrypt is *MIT License* (node.bcrypt.js, 2021)[^20]
 - Dotenv is *MIT License* (dotenv, 2015)[^21]
 - Jest is *MIT License* (jest, 2024)[^22]
+- Cors is *MIT License* (NPM, 2018)[^23]
 
-
+---
 ### References
 
 [^1]: Airbnb, JavaScript 2025, *Airbnb JavaScript Style Guide*, accessed on 10 May 2025, https://github.com/airbnb/javascript
@@ -74,6 +165,8 @@ Source for **Ruby on Rails** (Hotwire.dev, 2025)[^15]
 [^3]: MDN Web Docs, 2025, *Express/Noode introduction*, accessed on 10 May 2025, https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/Introduction
 
 [^4]: Geeks for Geeks, 2025, *How to use JSON web tokens with Node.js?*, accessed on 10 May 2025, https://www.geeksforgeeks.org/how-to-use-json-web-tokens-with-node-js/
+
+[^CORS]: MDN Web Docs, 2025, *Cross-Origin Resource Sharing (CORS)*, accessed on 10 May 2025, https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
 
 [^5]: Auth0, 2021, *Hashing in Action: Understanding bcrypt*, accessed on 10 May 2025,  https://auth0.com/blog/hashing-in-action-understanding-bcrypt/
 
@@ -111,3 +204,5 @@ https://www.mongodb.com/docs/manual/administration/production-notes/
 [^21]: dotenv on GitHub, 2015, *BSD 2-Clause "Simplified" License*, accessed on 27 May 2025, https://github.com/motdotla/dotenv/blob/master/LICENSE
 
 [^22]: jest on Github, 2024, *MIT License, jest / LICENSE*, accessed ib 27 May 2025, https://github.com/jestjs/jest/blob/main/LICENSE
+
+[^23]: NPM, 2018, *cors*, accessed on 27 May 2025, https://www.npmjs.com/package/cors#license
