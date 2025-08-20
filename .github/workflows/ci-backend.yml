@@ -1,0 +1,112 @@
+name: CI - Backend
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-backend.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+  schedule:
+    # Daily at 18:00 UTC (04:00 AEST/Brisbane +10)
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  test:
+    name: Run backend tests and publish logs
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:7
+        ports: ['27017:27017']
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })' || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_VERSION: '20'
+      # Persist logs to your S3 log bucket; set this secret in repo settings
+      LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
+      AWS_REGION:  ${{ secrets.AWS_REGION }}
+      # Example DB URL your tests might use:
+      DATABASE_URL: mongodb://localhost:27017/travelplanner_ci
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install deps
+        working-directory: backend
+        run: npm ci
+
+      - id: test
+        name: Run tests (CI mode) and write machine-readable results
+        working-directory: backend
+        continue-on-error: true
+        env:
+          # Configure Jest to emit JSON results and coverage summary
+          CI: true
+        run: |
+          mkdir -p reports
+          npm run test:ci
+
+      - name: Make custom test log
+        uses: ./.github/actions/make-test-log
+        with:
+          repo:        ${{ github.repository }}
+          commit_sha:  ${{ github.sha }}
+          run_id:      ${{ github.run_id }}
+          run_number:  ${{ github.run_number }}
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-artifacts
+          retention-days: 14
+          path: |
+            custom-test-log.txt
+            backend/reports/jest-results.json
+            backend/coverage/**
+
+      - name: Configure AWS credentials (for S3 log persistence)
+        if: always()
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Persist logs to S3 (long-term)
+        if: always()
+        run: |
+          TS=$(date -u +'%Y%m%dT%H%M%SZ')
+          BASE="s3://${{ env.LOG_BUCKET }}/backend/runs/${{ github.run_id }}_${{ github.run_number }}_${{ github.sha }}_${TS}"
+          aws s3 cp custom-test-log.txt "${BASE}/custom-test-log.txt" --only-show-errors
+          if [ -f backend/reports/jest-results.json ]; then
+            aws s3 cp backend/reports/jest-results.json "${BASE}/jest-results.json" --only-show-errors
+          fi
+          if [ -d backend/coverage ]; then
+            aws s3 sync backend/coverage "${BASE}/coverage" --only-show-errors
+          fi
+
+      - name: Fail job if tests failed
+        if: steps.test.outcome != 'success'
+        run: |
+          echo "Tests failed (see artifacts and S3 logs). Marking job as failed."
+          exit 1

@@ -1,0 +1,75 @@
+name: CD - Backend (Deploy on successful CI)
+
+on:
+  workflow_run:
+    workflows: ["CI - Backend"]
+    types: [completed]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    name: Build image, push to ECR, trigger App Runner
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION:        ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY:    ${{ secrets.ECR_REPOSITORY }}
+      APP_RUNNER_ARN:    ${{ secrets.APP_RUNNER_SERVICE_ARN }}
+    steps:
+      - name: Checkout source at triggering commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Use Node 20 (build-time necessities, if any)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG ./backend
+          docker tag  $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG                       $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+
+      - name: Record deployment metadata (S3)
+        env:
+          LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
+        run: |
+          TS=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          META_FILE="deploy-metadata.json"
+          cat > "$META_FILE" <<JSON
+          {
+            "timestamp": "$TS",
+            "repository": "${{ github.repository }}",
+            "commit": "${{ github.event.workflow_run.head_sha }}",
+            "ecr_image": "${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.event.workflow_run.head_sha }}",
+            "deployer": "${{ github.actor }}"
+          }
+          JSON
+          aws s3 cp "$META_FILE" "s3://${{ env.LOG_BUCKET }}/backend/deployments/${{ github.run_id }}_${{ github.run_number }}.json" --only-show-errors
+
+      - name: Trigger App Runner deployment (if not auto-deploy)
+        if: env.APP_RUNNER_ARN != ''
+        run: |
+          aws apprunner start-deployment --service-arn "${{ env.APP_RUNNER_ARN }}"
