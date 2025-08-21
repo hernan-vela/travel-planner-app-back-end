@@ -119,3 +119,4 @@ flowchart TB
 5. Push to `develop` or open a PR → CI runs. Merge to `main` → CD runs.
 
 > If you need a sample `Dockerfile` and `jest.config.cjs`, ping the assistant’s message—templates are available.
+ci refactor Thu 21 Aug 2025 18:44:46 AEST

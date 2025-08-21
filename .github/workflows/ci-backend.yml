@@ -4,15 +4,23 @@ on:
   push:
     branches: [ main, develop ]
     paths:
-      - 'backend/**'
+      - 'src/**'
+      - '__tests__/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'Dockerfile'
       - '.github/workflows/ci-backend.yml'
+      - '.github/actions/make-test-log/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'backend/**'
+      - 'src/**'
+      - '__tests__/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'Dockerfile'
   schedule:
-    # Daily at 18:00 UTC (04:00 AEST/Brisbane +10)
-    - cron: '0 18 * * *'
+    - cron: '0 18 * * *'   # 18:00 UTC daily
   workflow_dispatch:
 
 permissions:
@@ -36,30 +44,24 @@ jobs:
 
     env:
       NODE_VERSION: '20'
-      # Persist logs to your S3 log bucket; set this secret in repo settings
       LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
       AWS_REGION:  ${{ secrets.AWS_REGION }}
-      # Example DB URL your tests might use:
       DATABASE_URL: mongodb://localhost:27017/travelplanner_ci
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install deps
-        working-directory: backend
         run: npm ci
 
       - id: test
         name: Run tests (CI mode) and write machine-readable results
-        working-directory: backend
         continue-on-error: true
         env:
-          # Configure Jest to emit JSON results and coverage summary
           CI: true
         run: |
           mkdir -p reports
@@ -81,8 +83,8 @@ jobs:
           retention-days: 14
           path: |
             custom-test-log.txt
-            backend/reports/jest-results.json
-            backend/coverage/**
+            reports/jest-results.json
+            coverage/**
 
       - name: Configure AWS credentials (for S3 log persistence)
         if: always()
@@ -98,11 +100,11 @@ jobs:
           TS=$(date -u +'%Y%m%dT%H%M%SZ')
           BASE="s3://${{ env.LOG_BUCKET }}/backend/runs/${{ github.run_id }}_${{ github.run_number }}_${{ github.sha }}_${TS}"
           aws s3 cp custom-test-log.txt "${BASE}/custom-test-log.txt" --only-show-errors
-          if [ -f backend/reports/jest-results.json ]; then
-            aws s3 cp backend/reports/jest-results.json "${BASE}/jest-results.json" --only-show-errors
+          if [ -f reports/jest-results.json ]; then
+            aws s3 cp reports/jest-results.json "${BASE}/jest-results.json" --only-show-errors
           fi
-          if [ -d backend/coverage ]; then
-            aws s3 sync backend/coverage "${BASE}/coverage" --only-show-errors
+          if [ -d coverage ]; then
+            aws s3 sync coverage "${BASE}/coverage" --only-show-errors
           fi
 
       - name: Fail job if tests failed
