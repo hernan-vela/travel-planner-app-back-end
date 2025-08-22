@@ -42,8 +42,8 @@ describe('Trip Expense Logic', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         location: 'Test City',
-        arrivalDate: '2025-09-08',
-        departureDate: '2025-09-09'
+        arrivalDate: '08/09/2025',
+        departureDate: '09/09/2025'
       });
     expect([200, 201]).toContain(tripRes.statusCode);
     tripId = tripRes.body._id || tripRes.body.id;
