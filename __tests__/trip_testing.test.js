@@ -1,89 +1,69 @@
 const request = require('supertest');
-const app = require('../src/index.js')
+const app = require('../src/app');
 
-let token = ''; 
+let token = '';
 let tripId = '';
+let email = '';
+const password = 'password';
 
-
-// fixed the trip_testing script so we needed to create a trip without a ID grab that id for testing the second issue
-// was that we needed to make arrival date and depature date MM/DD/YYYY when creati
-
-
-//Set up for test
 beforeAll(async () => {
-    // Login and get token
-    const res = await request(app)
-    .post('/login')
-    .send({ email: 'jesso@jesso.me', password: 'password' });
+  // register a fresh user
+  email = `test${Date.now()}@example.com`;
 
-    //get the token
-    token = res.body.token;
+  const reg = await request(app).post('/register').send({ email, password });
+  expect([200, 201]).toContain(reg.statusCode);
 
+  // login with PLAINTEXT password
+  const login = await request(app).post('/login').send({ email, password });
+  expect(login.statusCode).toBe(200);
+  token = login.body.token;
+  expect(token).toBeDefined();
 
-    // Create a trip and store its ID for testing
-    const tripRes = await request(app)
+  // create one trip to read later
+  const tripRes = await request(app)
     .post('/trips')
     .set('Authorization', `Bearer ${token}`)
     .send({
-        location: 'Test City',
-        arrivalDate: "08/09/1997",
-        departureDate: "09/09/2025",
+      location: 'Test City',
+      arrivalDate: '2025-09-08',
+      departureDate: '2025-09-09'
     });
-    tripId = tripRes.body._id;
+
+  expect([200, 201]).toContain(tripRes.statusCode);
+  tripId = tripRes.body._id || tripRes.body.id;
+  expect(tripId).toBeDefined();
 });
 
-// Testing
+describe('Get one trip and check keys', () => {
+  it('should return one trip with _id, location, arrivalDate, departureDate, totalExpense', async () => {
+    const res = await request(app)
+      .get(`/trips/${tripId}`)
+      .set('Authorization', `Bearer ${token}`);
 
-
-
-describe("Get one trip and return the check _id, location, arrivalDate, departureDate, and totalExpense", () => {
-    it("should return one trip with its the correct keys.", async () => {
-
-
-        const res = await request(app)
-        .get(`/trips/${tripId}`)
-        .set('Authorization', `Bearer ${token}`);
-    
-        // must be 200 OK otherwise the test will fail
-        expect(res.statusCode).toBe(200);
-
-        // check the body for the correct properties
-    
-        expect(res.body).toHaveProperty('_id');
-        expect(res.body).toHaveProperty('location');
-        expect(res.body).toHaveProperty('arrivalDate');
-        expect(res.body).toHaveProperty('departureDate');
-        expect(res.body).toHaveProperty('totalExpense');
-    });
-});
-
-describe("Check if login is successfull", () => {
-    it("should return a token and user email", async () => {
-        const res = await request(app)
-        .post('/login')
-        .send({ email: 'jesso@jesso.me', password: 'password' });
-        // must be 200 OK otherwise the test will fail
-        expect(res.statusCode).toBe(200);
-    });
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body).toHaveProperty('location');
+    expect(res.body).toHaveProperty('arrivalDate');
+    expect(res.body).toHaveProperty('departureDate');
+    expect(res.body).toHaveProperty('totalExpense');
   });
+});
 
-  // now to check if the ID exists in the database
+describe('Login works', () => {
+  it('should return 200 on /login', async () => {
+    const res = await request(app).post('/login').send({ email, password });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.token).toBeDefined();
+  });
+});
 
-describe("Check if trip ID exists in the database", () => {
-    it("should return a trip with the given ID", async () => {
+describe('Trip ID exists', () => {
+  it('should fetch the trip we created', async () => {
+    const res = await request(app)
+      .get(`/trips/${tripId}`)
+      .set('Authorization', `Bearer ${token}`);
 
-        
-        
-        const res = await request(app)
-        .get(`/trips/${tripId}`)
-        .set('Authorization', `Bearer ${token}`);
-        
-        
-        // must be 200 OK otherwise the test will fail
-        expect(res.statusCode).toBe(200);
-        
-        // check if the trip ID matches the one we created
-        expect(res.body._id).toBe(tripId);
-    });
-
+    expect(res.statusCode).toBe(200);
+    expect(res.body._id || res.body.id).toBe(tripId);
+  });
 });
