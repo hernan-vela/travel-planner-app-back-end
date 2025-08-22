@@ -25,7 +25,6 @@ function verifyToken(req, res, next) {
     try {
         // grab the token from the 'Authorization' header eg. from Bruno
       const token = req.headers['authorization'];
-      console.log('Authorization header:', token); //for debug
        // No token, return a nice 'Unauthorized'
       if (!token) {
           return unauthorized(res, 'Unauthorized');
@@ -33,15 +32,12 @@ function verifyToken(req, res, next) {
 
     // Cuts off 'Bearer' from the 'value' field in the Header
     const stripBearer = token.startsWith('Bearer ') ? token.slice(7) : token;
-      console.log('Token after Bearer removed:', stripBearer); //for debugging
 
     // Decoding the token  
     jwt.verify(stripBearer, secret, (err, decoded) => {
     if (err) {
-      console.log('JWT verify error:', err); // for debugging
         return res.status(403).send({ error: 'Forbidden' });
     }
-      console.log('DECODED TOKEN:', decoded);// for debugging
 
       // Stores decoded token for use throughout app
       req.auth = decoded;
