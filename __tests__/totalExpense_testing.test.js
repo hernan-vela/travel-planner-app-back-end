@@ -6,17 +6,34 @@ let tripId;
 let email;
 const password = 'password';
 
+async function getAnyCategoryId() {
+  // Categories are seeded on login for admin and an instance of User
+  const r = await request(app)
+    .get('/categories')
+    .set('Authorization', `Bearer ${token}`);
+  if (r.statusCode === 200 && Array.isArray(r.body) && r.body.length) {
+    return r.body[0]._id || r.body[0].id;
+  }
+  return null; // treat category as optional if route not present
+}
+
 async function createExpense(amount, note = 'test expense') {
+  const payload = {
+    trip: tripId,
+    amount,
+    description: note
+  };
+  const catId = await getAnyCategoryId();
+  if (catId) payload.category = catId;
+
   const res = await request(app)
     .post('/expenses')
     .set('Authorization', `Bearer ${token}`)
-    .send({
-      tripId,
-      amount,
-      description: note
-    });
+    .send(payload);
 
-  // many APIs return 201 on create; accept 200 or 201
+  if (![200, 201].includes(res.statusCode)) {
+    console.log('EXPENSE DEBUG:', res.statusCode, res.body);
+  }
   expect([200, 201]).toContain(res.statusCode);
   return res.body;
 }
@@ -29,9 +46,8 @@ describe('Trip Expense Logic', () => {
     const reg = await request(app).post('/register').send({ email, password });
     expect([200, 201]).toContain(reg.statusCode);
 
-    // 2) login with PLAINTEXT password
+    // 2) login with plaintext password
     const login = await request(app).post('/login').send({ email, password });
-    // if your API returns something else on login, adjust this:
     expect(login.statusCode).toBe(200);
     token = login.body.token;
     expect(token).toBeDefined();
@@ -45,11 +61,14 @@ describe('Trip Expense Logic', () => {
         arrivalDate: '08/09/2025',
         departureDate: '09/09/2025'
       });
+    if (![200, 201].includes(tripRes.statusCode)) {
+      console.log('TRIP CREATE DEBUG:', tripRes.statusCode, tripRes.body);
+    }
     expect([200, 201]).toContain(tripRes.statusCode);
     tripId = tripRes.body._id || tripRes.body.id;
     expect(tripId).toBeDefined();
 
-    // 4) seed a couple of expenses
+    // 4) seed expenses as example
     await createExpense(100, 'hotel');
     await createExpense(50, 'food');
   });
@@ -64,7 +83,6 @@ describe('Trip Expense Logic', () => {
 
     const mine = res.body.find(t => (t._id || t.id) === tripId);
     expect(mine).toBeDefined();
-    // total should be 150 after two expenses above
     expect(Number(mine.totalExpense)).toBe(150);
   });
 
