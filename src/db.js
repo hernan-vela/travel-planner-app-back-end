@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 // Connect to MongoDB
 async function connect() {
-  const uri = process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/travelp';
+  const uri = process.env.DATABASE_URL || process.env.MONGODB_URI;
   await mongoose.connect(uri);
   console.log(mongoose.connection.readyState == 1 ? 'Mongoose connected' : 'Mongoose failed to connect!');
 }
