@@ -1,20 +1,43 @@
-// import mongoose from 'mongoose'
+// src/db.js
 const mongoose = require('mongoose');
 
+let connectPromise = null; // track in-flight connect
 
-// Connect to MongoDB
-async function connect() {
-  const uri = process.env.DATABASE_URL || process.env.MONGODB_URI;
-  await mongoose.connect(uri);
-  console.log(mongoose.connection.readyState == 1 ? 'Mongoose connected' : 'Mongoose failed to connect!');
+function getUri() {
+  return process.env.DATABASE_URL || process.env.MONGODB_URI || '';
 }
 
-// Disconnect from MongoDB
+async function connect(uri = getUri()) {
+  if (!uri) throw new Error('Missing DATABASE_URL or MONGODB_URI');
+
+  // 0=disconnected, 1=connected, 2=connecting, 3=disconnecting
+  const state = mongoose.connection.readyState;
+  if (state === 1) return mongoose.connection;        // already connected
+  if (state === 2 && connectPromise) return connectPromise; // in progress
+
+  connectPromise = mongoose.connect(uri, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+    family: 4, // prefer IPv4 to avoid odd DNS issues in CI
+  });
+
+  await connectPromise;
+  if (process.env.NODE_ENV !== 'test') {
+    console.log('Mongoose connected');
+  }
+  return mongoose.connection;
+}
 
 async function close() {
-  await mongoose.disconnect()
-  console.log(mongoose.connection.readyState == 0 ? 'Mongoose disconnected!' : 'Mongoose failed to disconnect!')
+  const state = mongoose.connection.readyState;
+  if (state === 0) return;            // already disconnected
+  if (state === 3) return;            // disconnecting
+  await mongoose.connection.close();   // close this connection
+  connectPromise = null;
+  if (process.env.NODE_ENV !== 'test') {
+    console.log('Mongoose disconnected!');
+  }
 }
 
-// Best practice export
-module.exports = { connect, close }
+module.exports = { connect, close };
