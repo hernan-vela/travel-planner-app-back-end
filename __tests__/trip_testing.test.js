@@ -25,7 +25,7 @@ beforeAll(async () => {
     .set('Authorization', `Bearer ${token}`)
     .send({
       location: 'Test City',
-      arrivalDate: '09/09/2025',
+      arrivalDate: '08/09/2025',
       departureDate: '09/09/2025'
     });
 
