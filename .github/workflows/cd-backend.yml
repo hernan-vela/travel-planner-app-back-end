@@ -68,8 +68,3 @@ jobs:
           }
           JSON
           aws s3 cp "$META_FILE" "s3://${{ env.LOG_BUCKET }}/backend/deployments/${{ github.run_id }}_${{ github.run_number }}.json" --only-show-errors
-
-      - name: Trigger App Runner deployment (if not auto-deploy)
-        if: env.APP_RUNNER_ARN != ''
-        run: |
-          aws apprunner start-deployment --service-arn "${{ env.APP_RUNNER_ARN }}"
