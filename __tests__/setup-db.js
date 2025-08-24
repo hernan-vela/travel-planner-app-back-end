@@ -12,7 +12,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // Close DB (and server if you ever attach it to global)
+  // Close DB (and server if needed)
   try { await close(); } catch {}
   if (global.__server && global.__server.close) {
     await new Promise((r) => global.__server.close(() => r()));

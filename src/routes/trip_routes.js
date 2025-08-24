@@ -109,7 +109,7 @@ router.delete('/trips/:id', async (req, res) => {
   if (trip) {
     // sent the trip to the client
     res.send(trip)
-    // return an meaningful message to the client in case of error
+    // return a meaningful message to the client in case of error
   } else {
     res.status(404).send({ error: `Trip with id = '${req.params.id}' not found` })
   }

@@ -1,4 +1,4 @@
-// src/db.js
+
 const mongoose = require('mongoose');
 
 let connectPromise = null; // track in-flight connect
